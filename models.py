@@ -1,6 +1,17 @@
 """Image Classifier for comparing predictions
 
 2019 Colin Dietrich
+
+
+Terminology
+-----------
+id : int, number of class identified
+label : str, readible class name
+score : float, class score output from model
+y : input value
+p : predicted output value
+image : image data
+image_array : numpy array of image data
 """
 
 import os
@@ -99,6 +110,7 @@ class ImageClassifier:
         d_label = []
         d_pred = []
         for k, v in self.d.items():
+            k = k.strip().replace('_', ' ').lower()  # be consistent!
             d_label += [k]*len(v)
             d_pred += v
         self.df = pd.DataFrame({"y_true":d_label, "y_pred":d_pred})
@@ -119,17 +131,19 @@ class ClassifyRegular(ImageClassifier):
 
     def predict(self, image_a, top=1, score=False):
         p_n_label = self.model.predict(image_a)
+        print("p_n_label:", p_n_label)
         pred = imagenet_utils.decode_predictions(p_n_label, top=top)
-        class_id, class_name, class_score = pred[0][0]
+        p_id, p_label, p_score = pred[0][0]
+        p_label = p_label.strip().replace('_', ' ').lower()  # be consistent!
         if score:
-            return class_name, class_score
+            return p_label, p_score
         else:
-            return class_name
+            return p_label
 
     def predict_file(self, file_path, top=1):
         image_a = self.preprocess(file_path, expand=True, scale=True)
-        class_name = self.predict(image_a, top=top)
-        return class_name
+        p_label = self.predict(image_a, top=top)
+        return p_label
 
 class ClassifyTPU(ImageClassifier):
     def __init__(self):
@@ -139,16 +153,19 @@ class ClassifyTPU(ImageClassifier):
 
     def load_model(self, label_file=None, model_file=None):
         """Load a pretrained model"""
+        
+        # Prepared labels
         if label_file is not None:
             self.label_file = label_file
-        self.labels = self.read_label_file(label_file)  # Prepared labels
-
+        self.labels = self.read_label_file(self.label_file)
+        
+        # Initialize TPU engine
         if model_file is not None:
             self.model_file = model_file
 
         from edgetpu.classification.engine import ClassificationEngine
-
-        self.model = ClassificationEngine(model_file)  # Initialize TPU engine
+        
+        self.model = ClassificationEngine(self.model_file)
 
     def read_label_file(self, file_path):
         """Function to read labels from text files"""
@@ -156,19 +173,25 @@ class ClassifyTPU(ImageClassifier):
             lines = f.readlines()
         ret = {}
         for line in lines:
-            pair = line.strip().split(maxsplit=1)
-            ret[int(pair[0])] = pair[1].strip()
+            num = line[:4].strip()
+            label = line[5:].strip().split(',')[0].lower()
+            ret[int(num)] = label
         return ret
 
     def predict(self, image_a, top=5, score=False):
-        [(p_n_label, p_score)] = self.model.ClassifyWithImage(image_a)
-        class_id = self.labels[p_n_label]
-        if score:
-            return class_id, p_score
+        pred = self.model.ClassifyWithImage(image_a)
+        if len(pred) == 0:
+            p_label = 'other'
+            p_score = 0.0
         else:
-            return class_id
+            p_n_label, p_score = pred[0]
+            p_label = self.labels[p_n_label]
+        if score:
+            return p_label, p_score
+        else:
+            return p_label
 
     def predict_file(self, file_path, top=5):
         image_a = self.preprocess(file_path)
-        class_id = self.predict(image_a, top=top)
-        return class_id
+        p_label = self.predict(image_a, top=top)
+        return p_label
