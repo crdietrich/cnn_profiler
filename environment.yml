@@ -1,0 +1,20 @@
+name: edgetpu
+
+channels:
+  - defaults
+  - conda-forge
+
+dependencies:
+  - python=3.6
+  - numpy
+  - pandas
+  - statsmodels
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyter
+  - tensorflow-gpu
+  - tensorflow-hub
+  - pillow
+  - keras
+  - pip
