@@ -3,6 +3,10 @@
 2019 Colin Dietrich
 """
 
+import os
+import requests
+import tarfile
+
 class Download():
     def __init__(self, data_url, data_directory):
         self.data_directory = data_directory
@@ -63,7 +67,7 @@ if __name__ == "__main__":
     directory = os.path.normpath("")
     gs = Download("","")
     gs.download_data(d_url="https://upload.wikimedia.org/wikipedia/commons/a/a9/Female_German_Shepherd.jpg",
-                 d_directory=directory)
+                 d_directory=directory, verbose=True)
     url = 'http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar'
     d_images = Download(data_url=url, data_directory=directory)
     d_images.extract(verbose=True)
