@@ -131,7 +131,6 @@ class ClassifyRegular(ImageClassifier):
 
     def predict(self, image_a, top=1, score=False):
         p_n_label = self.model.predict(image_a)
-        print("p_n_label:", p_n_label)
         pred = imagenet_utils.decode_predictions(p_n_label, top=top)
         p_id, p_label, p_score = pred[0][0]
         p_label = p_label.strip().replace('_', ' ').lower()  # be consistent!
@@ -153,18 +152,18 @@ class ClassifyTPU(ImageClassifier):
 
     def load_model(self, label_file=None, model_file=None):
         """Load a pretrained model"""
-        
+
         # Prepared labels
         if label_file is not None:
             self.label_file = label_file
         self.labels = self.read_label_file(self.label_file)
-        
+
         # Initialize TPU engine
         if model_file is not None:
             self.model_file = model_file
 
         from edgetpu.classification.engine import ClassificationEngine
-        
+
         self.model = ClassificationEngine(self.model_file)
 
     def read_label_file(self, file_path):
