@@ -78,8 +78,8 @@ class Matrix:
         p = row.p
         self.a[y, p] = self.a[y, p] + row.n
 
-    def plot(self, font_scale=1.4, axis_labels=True, ticklabels=False, figsize=5,
-             **kwargs):
+    def plot(self, font_scale=1.4, axis_labels=True, ticklabels=False, 
+             figsize=5, **kwargs):
         """Plot a Confusion Matrix
 
         Parameters
