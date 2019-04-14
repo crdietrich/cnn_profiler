@@ -65,9 +65,14 @@ class Download():
 if __name__ == "__main__":
     import os
     directory = os.path.normpath("")
-    gs = Download("","")
-    gs.download_data(d_url="https://upload.wikimedia.org/wikipedia/commons/a/a9/Female_German_Shepherd.jpg",
+    # TPU model file and ImageNet labels
+    d = Download("","")
+    d.download_data(d_url="https://storage.googleapis.com/cloud-iot-edge-pretrained-models/canned_models/mobilenet_v2_1.0_224_quant_edgetpu.tflite")
+    d.download_data(d_url="http://storage.googleapis.com/cloud-iot-edge-pretrained-models/canned_models/imagenet_labels.txt")
+    # simple test image
+    d.download_data(d_url="https://upload.wikimedia.org/wikipedia/commons/a/a9/Female_German_Shepherd.jpg",
                  d_directory=directory, verbose=True)
+    # Images for ImageNet ID
     url = 'http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar'
     d_images = Download(data_url=url, data_directory=directory)
     d_images.extract(verbose=True)
