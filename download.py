@@ -61,7 +61,7 @@ class Download():
 if __name__ == "__main__":
     import os
     directory = os.path.normpath("")
-    gs = Download(_,_)
+    gs = Download("","")
     gs.download_data(d_url="https://upload.wikimedia.org/wikipedia/commons/a/a9/Female_German_Shepherd.jpg",
                  d_directory=directory)
     url = 'http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar'
