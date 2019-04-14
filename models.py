@@ -26,8 +26,8 @@ class ImageClassifier:
 
         self.model = None
 
-        self.h = 128
-        self.w = 128
+        self.h = 224
+        self.w = 224
         self.depth_multiplier = 1.0
         self.d = None
         self.df = None
@@ -147,7 +147,7 @@ class ClassifyRegular(ImageClassifier):
 class ClassifyTPU(ImageClassifier):
     def __init__(self):
         super().__init__()
-        self.label_file = "/home/pi/Downloads/imagenet_labels.txt"
+        self.label_file = "imagenet_labels.txt"
         self.model_file = "mobilenet_v2_1.0_224_quant_edgetpu.tflite"
 
     def load_model(self, label_file=None, model_file=None):
