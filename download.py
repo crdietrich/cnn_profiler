@@ -35,8 +35,10 @@ class Download():
                 f.write(res.content)
             if verbose:
                 print('Data is located in %s' % d_directory)
+            return True
         else:
             print('Download file already exists in {}'.format(d_directory))
+            return False
 
     @staticmethod
     def extract_files(d_file, d_directory=".", verbose=False):
@@ -51,19 +53,24 @@ class Download():
             tar = tarfile.open(d_file, "r:gz")
             tar.extractall(path=d_directory)
             tar.close()
+        if verbose:
+            print("Files extracted successfully to {}".format(d_directory))
         elif d_file.endswith("tar") or d_file.endswith("tarfile"):
             tar = tarfile.open(d_file, "r:")
             tar.extractall(path=d_directory)
             tar.close()
-        if verbose:
-            print("Files extracted successfully to {}".format(d_directory))
+            if verbose:
+                print("Files extracted successfully to {}".format(d_directory))
 
     def extract(self, verbose=False):
-        self.download_data(self.data_url, self.data_directory, verbose)
-        self.extract_files(self.data_file_target, self.data_directory, verbose)
+        if self.download_data(self.data_url, self.data_directory, verbose):
+            self.extract_files(self.data_file_target, self.data_directory, verbose)
+            print('Files extracted to {}'.format(self.data_file_target))
+        else:
+            print('File archive already extracted')
 
-if __name__ == "__main__":
-
+        
+def download_all():
     import config
     directory = config.download_directory
 
@@ -77,6 +84,12 @@ if __name__ == "__main__":
     d.download_data(d_url="https://upload.wikimedia.org/wikipedia/commons/a/a9/Female_German_Shepherd.jpg",
                     d_directory=directory, verbose=True)
     # Images for ImageNet ID
+    
     url = 'http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar'
     d_images = Download(data_url=url, data_directory=directory)
     d_images.extract(verbose=True)
+    print('Done!')
+    
+if __name__ == "__main__":
+    download_all()
+
