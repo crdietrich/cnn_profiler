@@ -144,7 +144,46 @@ class ClassifyRegular(ImageClassifier):
         p_label = self.predict(image_a, top=top)
         return p_label
 
-class ClassifyTPU(ImageClassifier):
+class ClassifyColabTPU(ImageClassifier):
+    def __init__(self):
+        super().__init__()
+
+    def load_model(self, model_instance=False):
+        """Load a pretrained model"""
+        if not model_instance:
+            try:
+                device_name = os.environ['COLAB_TPU_ADDR']
+                TPU_ADDRESS = 'grpc://' + device_name
+                print('Found TPU at: {}'.format(TPU_ADDRESS))
+
+            except KeyError:
+                print('TPU not found')
+
+            from keras.applications import mobilenet_v2
+
+            self.model = mobilenet_v2.MobileNetV2(
+                             input_shape=(self.h, self.w, 3))
+            #, depth_multiplier=self.depth_multiplier)
+            self.model = tf.tf.contrib.tpu.keras_to_tpu_model(self.model,
+                strategy=tf.contrib.tpu.TPUDistributionStrategy(
+                tf.contrib.cluster_resolver.TPUClusterResolver(TPU_ADDRESS)))
+
+    def predict(self, image_a, top=1, score=False):
+        p_n_label = self.model.predict(image_a)
+        pred = imagenet_utils.decode_predictions(p_n_label, top=top)
+        p_id, p_label, p_score = pred[0][0]
+        p_label = p_label.strip().replace('_', ' ').lower()  # be consistent!
+        if score:
+            return p_label, p_score
+        else:
+            return p_label
+
+    def predict_file(self, file_path, top=1):
+        image_a = self.preprocess(file_path, expand=True, scale=True)
+        p_label = self.predict(image_a, top=top)
+        return p_label
+
+class ClassifyEdgeTPU(ImageClassifier):
     def __init__(self):
         super().__init__()
         self.label_file = "imagenet_labels.txt"
