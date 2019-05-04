@@ -17,4 +17,5 @@ dependencies:
   - tensorflow-hub
   - pillow
   - keras
+  - line_profiler
   - pip

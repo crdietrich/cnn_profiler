@@ -4,3 +4,11 @@
 *.jpg
 
 *.tar
+
+__pycache__/
+
+archive/
+
+*.csv
+
+*pstats.txt
