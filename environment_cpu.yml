@@ -18,4 +18,5 @@ dependencies:
   - pillow
   - keras
   - line_profiler
+  - requests
   - pip

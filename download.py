@@ -63,8 +63,10 @@ class Download():
         self.extract_files(self.data_file_target, self.data_directory, verbose)
 
 if __name__ == "__main__":
-    import os
-    directory = os.path.normpath("")
+
+    import config
+    directory = config.download_directory
+
     # TPU model file and ImageNet labels
     d = Download("","")
     d.download_data(d_url="https://storage.googleapis.com/cloud-iot-edge-pretrained-models/canned_models/mobilenet_v2_1.0_224_quant_edgetpu.tflite",
