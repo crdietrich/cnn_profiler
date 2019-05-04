@@ -1,4 +1,4 @@
-name: edgetpu
+name: cnn_profiler_gpu
 
 channels:
   - defaults

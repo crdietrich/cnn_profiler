@@ -1,4 +1,4 @@
-name: cnn_profiler_reg
+name: cnn_profiler_cpu
 
 channels:
   - defaults
