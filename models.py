@@ -36,8 +36,14 @@ class ImageClassifier:
         self.labels = None
 
     @staticmethod
-    def name_from_directory(dir_path):
-        return dir_path.split(os.path.sep)[1].split("-")[1]
+    def name_from_directory(dir_path, verbose=False):
+        if verbose:
+            print(dir_path)
+            print(dir_path.split(os.path.sep))
+            print(dir_path.split(os.path.sep)[-1])
+            print(dir_path.split(os.path.sep)[-1].split("-"))
+            print('='*50)
+        return dir_path.split(os.path.sep)[-1].split("-")[1]
 
     def preprocess(self, file_path, to_array=False, expand=False, scale=False):
         """Load and convert JPG image file to Numpy Array
@@ -63,7 +69,7 @@ class ImageClassifier:
             image_a = imagenet_utils.preprocess_input(image_a, mode="tf")
         return image_a
 
-    def predict_dataset(self, dataset_path):
+    def predict_dataset(self, dataset_path, verbose=False):
         """Predict top 1 label for each image in directory_path
 
         Parameters
@@ -71,6 +77,7 @@ class ImageClassifier:
         dataset_path : str, path to folder containing images
             assuming it contains subfolders for each class
             and that the folder is named for the class
+        verbose : bool, print debug statements
 
         Returns
         -------
@@ -82,7 +89,7 @@ class ImageClassifier:
         ddf = list(os.walk(os.path.normpath(dataset_path)))
         self.d = {}
         for dirpath, dirnames, filenames in ddf[1:]:
-            name = self.name_from_directory(dirpath)
+            name = self.name_from_directory(dirpath, verbose)
             predicted_labels = []
             for f_name in filenames:
                 f_path = os.path.normpath(dirpath + os.path.sep + f_name)
