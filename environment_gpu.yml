@@ -13,7 +13,7 @@ dependencies:
   - matplotlib
   - seaborn
   - jupyter
-  - tensorflow-gpu
+  - tensorflow-gpu=1.10.0
   - tensorflow-hub
   - pillow
   - keras
