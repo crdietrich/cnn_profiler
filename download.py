@@ -97,10 +97,10 @@ def download_all():
     d.download_data(d_url="https://upload.wikimedia.org/wikipedia/commons/a/a9/Female_German_Shepherd.jpg",
                     d_directory=directory, verbose=True)
     # Images for ImageNet ID
-    
-    url = 'http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar'
-    d_images = Download(data_url=url, data_directory=directory)
-    d_images.extract(verbose=True)
+    if not os.path.exists(config.images_directory):
+        url = 'http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar'
+        d_images = Download(data_url=url, data_directory=directory)
+        d_images.extract(verbose=True)
     print('Done!')
     
 if __name__ == "__main__":
