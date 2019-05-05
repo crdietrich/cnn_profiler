@@ -98,9 +98,12 @@ def download_all():
                     d_directory=directory, verbose=True)
     # Images for ImageNet ID
     if not os.path.exists(config.images_directory):
+        print('Extracted Images not found, downloading...')
         url = 'http://vision.stanford.edu/aditya86/ImageNetDogs/images.tar'
         d_images = Download(data_url=url, data_directory=directory)
         d_images.extract(verbose=True)
+    else:
+        print('Extracted ImageNet Dog Images found, skipping download.')
     print('Done!')
     
 if __name__ == "__main__":
