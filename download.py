@@ -7,6 +7,8 @@ import os
 import requests
 import tarfile
 
+import config
+
 class Download():
     def __init__(self, data_url, data_directory):
         self.data_directory = data_directory
@@ -15,7 +17,18 @@ class Download():
         self.data_file_target = os.path.normpath(data_directory +
                                                  os.path.sep +
                                                  self.data_file)
-
+        self.create_directories()
+        
+    @staticmethod
+    def create_directories():
+        """Create file structure for project, see README.md for details.
+        pathlib would be ideal, but use os for <3.2 support here
+        """
+        if not os.path.exists(config.data_directory):
+            os.makedirs(config.data_directory)
+        if not os.path.exists(config.download_directory):
+            os.makedirs(config.download_directory)
+        
     @staticmethod
     def download_data(d_url, d_directory, verbose=False):
         """Download data to local directory
