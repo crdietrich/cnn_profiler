@@ -92,6 +92,9 @@ class ImageClassifier:
 
         ddf = list(os.walk(os.path.normpath(dataset_path)))
         self.d = {}
+        if self.telemetry_enable:
+            print('>> Telemetry Enabled')
+            self.telemetry.send("profile_start")
         for dirpath, dirnames, filenames in ddf[1:]:
             name = self.name_from_directory(dirpath, verbose)
             predicted_labels = []
@@ -100,6 +103,9 @@ class ImageClassifier:
                 p_label = self.predict_file(f_path)
                 predicted_labels.append(p_label)
             self.d[name] = predicted_labels
+        if self.telemetry_enable:
+            print('>> Telemetry Done')
+            self.telemetry.send("profile_end")
 
     def collate_predictions(self):
         """Collate predictions into a Pandas DataFrame
@@ -146,30 +152,18 @@ class ClassifyRegular(ImageClassifier):
             #, depth_multiplier=self.depth_multiplier)
 
     def predict(self, image_a, top=1, score=False):
-        if self.telemetry_enable:
-            print('>> Telemetry Enabled')
-            self.telemetry.send("predict start")
         p_n_label = self.model.predict(image_a)
         pred = imagenet_utils.decode_predictions(p_n_label, top=top)
         p_id, p_label, p_score = pred[0][0]
         p_label = p_label.strip().replace('_', ' ').lower()  # be consistent!
-        if self.telemetry_enable:
-            print('>> Telemetry Done')
-            self.telemetry.send("predict end")
         if score:
             return p_label, p_score
         else:
             return p_label
 
     def predict_file(self, file_path, top=1):
-        if self.telemetry_enable:
-            print('>> Telemetry Enabled')
-            self.telemetry.send("predict start")
         image_a = self.preprocess(file_path, expand=True, scale=True)
         p_label = self.predict(image_a, top=top)
-        if self.telemetry_enable:
-            print('>> Telemetry Done')
-            self.telemetry.send("predict end")
         return p_label
 
 class ClassifyColabTPU(ImageClassifier):
@@ -245,9 +239,6 @@ class ClassifyEdgeTPU(ImageClassifier):
         return ret
 
     def predict(self, image_a, top=5, score=False):
-        if self.telemetry_enable:
-            print('>> Telemetry Enabled')
-            self.telemetry.send("predict start")
         pred = self.model.ClassifyWithImage(image_a)
         if len(pred) == 0:
             p_label = 'other'
@@ -255,21 +246,12 @@ class ClassifyEdgeTPU(ImageClassifier):
         else:
             p_n_label, p_score = pred[0]
             p_label = self.labels[p_n_label]
-        if self.telemetry_enable:
-            print('>> Telemetry Done')
-            self.telemetry.send("predict end")
         if score:
             return p_label, p_score
         else:
             return p_label
 
     def predict_file(self, file_path, top=5):
-        if self.telemetry_enable:
-            print('>> Telemetry Enabled')
-            self.telemetry.send("predict start")
         image_a = self.preprocess(file_path)
         p_label = self.predict(image_a, top=top)
-        if self.telemetry_enable:
-            print('>> Telemetry Done')
-            self.telemetry.send("predict end")
         return p_label

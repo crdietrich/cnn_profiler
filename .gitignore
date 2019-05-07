@@ -20,3 +20,5 @@ downloads/imagenet_labels\.txt
 *.tgz
 
 *.tflite
+
+\.idea/
