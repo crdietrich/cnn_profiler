@@ -20,6 +20,7 @@ import pandas as pd
 from keras.preprocessing.image import load_img, img_to_array
 from keras.applications import imagenet_utils
 
+import config
 from client import Telemetry
 
 class ImageClassifier:
@@ -208,8 +209,10 @@ class ClassifyColabTPU(ImageClassifier):
 class ClassifyEdgeTPU(ImageClassifier):
     def __init__(self):
         super().__init__()
-        self.label_file = "imagenet_labels.txt"
-        self.model_file = "mobilenet_v2_1.0_224_quant_edgetpu.tflite"
+        self.label_file = (config.download_directory + os.path.sep + 
+                           "imagenet_labels.txt")
+        self.model_file = (config.download_directory + os.path.sep + 
+                           "mobilenet_v2_1.0_224_quant_edgetpu.tflite")
 
     def load_model(self, label_file=None, model_file=None):
         """Load a pretrained model"""
