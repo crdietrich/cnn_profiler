@@ -3,6 +3,7 @@
 Colin Dietrich 2019
 """
 
+import os
 import io
 import pstats
 import pandas as pd
@@ -17,18 +18,27 @@ class PstatsParse:
         self.total_time_s = self.p.total_tt
         self.total_time_min = self.total_time_s / 60.0
         
-        fs = self.filepath.split('_')
+        fp = self.filepath.split(os.path.sep)
+        
+        # file information
+        # platform PU PU_type tf_version runid
+        fs = fp[-1].split('_')
         self.platform = fs[0]
-        self.model_type = fs[1]
-        self.run_id = fs[2]
+        self.pu = fs[1]
+        self.pu_type = fs[2]
+        self.tf_version = fs[3]
+        self.run_id = fs[4]
         
         fspred = self.filepath.split('_pstats.txt')
         self.df_pred = pd.read_csv(fspred[0] + '_predictions.csv')
         
+        # accuracy
         n = len(self.df_pred)
         self.acc = self.df_pred.y_pred == self.df_pred.y_true
         self.acc = self.acc.sum()/n
         self.acc_dog = self.df_pred.y_pred_dog.sum()/n
+        
+        # precision
         
         # capture print output
         self.sio = io.StringIO()
