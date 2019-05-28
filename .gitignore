@@ -1,24 +1,30 @@
-
+# Jupyter notebook checkpoints
 \.ipynb_checkpoints/
 
+# images
 *.jpg
 
+# compressed files
 *.tar
-
-__pycache__/
-
-*.pyc
-
-archive/
-
-*.csv
-
-*pstats.txt
-
-downloads/imagenet_labels\.txt
-
 *.tgz
 
+# Python binary cache files
+__pycache__/
+*.pyc
+
+# old copies, dev stuff
+archive/
+
+# data files
+*.csv
+*pstats.txt
+*profile_output*.txt
+
+# label data for images
+downloads/imagenet_labels\.txt
+
+# TensorFlow models
 *.tflite
 
+# PyCharm project
 \.idea/
